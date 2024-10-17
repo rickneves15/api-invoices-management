@@ -6,6 +6,10 @@ import { PrismaService } from 'nestjs-prisma'
 export class CustomersService {
   constructor(private readonly prisma: PrismaService) {}
 
+  async getCustomers() {
+    return this.prisma.customer.findMany()
+  }
+
   async getCustomerByNumber(customerNumber: bigint) {
     return this.prisma.customer.findUnique({
       where: {
