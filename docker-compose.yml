@@ -1,0 +1,31 @@
+services:
+  db:
+    image: postgres
+    restart: always
+    container_name: postgres
+    environment:
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
+      - POSTGRES_DB=invoices_management
+    ports:
+      - 5432:5432
+    networks:
+      - service_measure
+
+  pgadmin:
+    image: dpage/pgadmin4
+    restart: always
+    container_name: postgres_admin
+    environment:
+      - PGADMIN_DEFAULT_EMAIL=admin@admin.com
+      - PGADMIN_DEFAULT_PASSWORD=postgres
+    ports:
+      - 5050:80
+    depends_on:
+      - db
+    networks:
+      - invoices_management
+
+networks:
+  invoices_management:
+    driver: bridge
