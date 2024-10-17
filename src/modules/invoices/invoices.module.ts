@@ -1,7 +1,8 @@
 import { Module } from '@nestjs/common'
 
-import { CustomersService } from '../customers/customers.service'
-import { ExtractInvoiceFromPdfService } from '../extract-from-pdf/extract-invoice.service'
+import { CustomersService } from '~/modules/customers/customers.service'
+import { ExtractInvoiceFromPdfService } from '~/modules/extract-from-pdf/extract-invoice.service'
+
 import { InvoicesController } from './invoices.controller'
 import { InvoicesService } from './invoices.service'
 

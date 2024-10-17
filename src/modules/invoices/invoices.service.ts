@@ -1,5 +1,6 @@
 import { Injectable, Logger } from '@nestjs/common'
 import { Prisma } from '@prisma/client'
+import { startOfMonth, subMonths } from 'date-fns'
 import { PrismaService } from 'nestjs-prisma'
 import { createPaginator } from 'prisma-pagination'
 
@@ -20,6 +21,7 @@ import { CustomersService } from '~/modules/customers/customers.service'
 import { ExtractInvoiceFromPdfService } from '~/modules/extract-from-pdf/extract-invoice.service'
 
 import { GetInvoicesDto } from './dtos/get-invoices.dtos'
+import { GetTotalInvoicesResponseDto } from './dtos/get-total-invoices'
 import { UploadInvoiceDto } from './dtos/upload-invoice.dto'
 
 @Injectable()
@@ -140,5 +142,37 @@ export class InvoicesService {
 
   async createInvoice(data: Prisma.InvoiceCreateInput) {
     return this.prisma.invoice.create({ data })
+  }
+
+  async getTotalInvoices(): Promise<GetTotalInvoicesResponseDto> {
+    const totalInvoices = await this.prisma.invoice.count()
+
+    const currentDate = new Date()
+    const startOfCurrentMonth = startOfMonth(currentDate)
+    const startOfPreviousMonth = startOfMonth(subMonths(currentDate, 1))
+
+    const invoicesInCurrentMonth = await this.prisma.invoice.count({
+      where: {
+        createdAt: {
+          gte: startOfCurrentMonth,
+        },
+      },
+    })
+
+    const invoicesInPreviousMonth = await this.prisma.invoice.count({
+      where: {
+        createdAt: {
+          gte: startOfPreviousMonth,
+          lt: startOfCurrentMonth,
+        },
+      },
+    })
+
+    const difference = invoicesInCurrentMonth - invoicesInPreviousMonth
+
+    return {
+      total: totalInvoices,
+      difference,
+    }
   }
 }
