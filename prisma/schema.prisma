@@ -1,0 +1,49 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Customer {
+  id             String   @id @default(cuid())
+  customerNumber BigInt   @unique
+  name           String
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+
+  invoices Invoice[]
+
+  @@map("customers")
+}
+
+model Invoice {
+  id                                  String   @id @default(cuid())
+  installationNumber                  BigInt
+  referenceMonth                      String
+  totalAmount                         Decimal  @db.Decimal(10, 2)
+  dueDate                             DateTime
+  energyQuantity                      Decimal  @db.Decimal(10, 3)
+  energyAmount                        Decimal  @db.Decimal(10, 2)
+  exemptEnergyQuantity                Decimal? @db.Decimal(10, 3)
+  exemptEnergyAmount                  Decimal? @db.Decimal(10, 2)
+  compensatedEnergyQuantity           Decimal? @db.Decimal(10, 3)
+  compensatedEnergyAmount             Decimal? @db.Decimal(10, 2)
+  municipalPublicLightingContribution Decimal  @db.Decimal(10, 3)
+  invoiceUrl                          String
+  createdAt                           DateTime @default(now())
+  updatedAt                           DateTime @updatedAt
+  customerId                          BigInt
+  customer                            Customer @relation(fields: [customerId], references: [customerNumber], onDelete: Cascade)
+
+  @@index([customerId])
+  @@map("invoices")
+}

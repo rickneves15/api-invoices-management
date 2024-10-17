@@ -1,6 +1,7 @@
 import { Module } from '@nestjs/common'
 import { ConfigModule as NestConfigModule } from '@nestjs/config'
 import { APP_PIPE } from '@nestjs/core'
+import { PrismaModule } from 'nestjs-prisma'
 import { ZodValidationPipe } from 'nestjs-zod'
 
 @Module({
@@ -8,6 +9,10 @@ import { ZodValidationPipe } from 'nestjs-zod'
     NestConfigModule.forRoot({
       envFilePath: [`${process.cwd()}/.env`],
       cache: true,
+      isGlobal: true,
+    }),
+
+    PrismaModule.forRoot({
       isGlobal: true,
     }),
   ],
