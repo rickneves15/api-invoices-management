@@ -1,7 +1,9 @@
 import {
   Controller,
+  Get,
   Logger,
   Post,
+  Query,
   UploadedFiles,
   UseInterceptors,
 } from '@nestjs/common'
@@ -31,6 +33,22 @@ export class InvoicesController {
   ) {
     try {
       return this.invoicesService.processInvoice(files)
+    } catch (error) {
+      this.Logger.error(error)
+      throw new BizException(ErrorCodeEnum.ErrorCodeUnknown)
+    }
+  }
+
+  @Get()
+  getInvoices(
+    @Query('page') page: number = 1,
+    @Query('perPage') perPage: number = 10,
+    @Query('customerNumber') customerNumber: string,
+    @Query('referenceMonth') referenceMonth: string,
+  ) {
+    try {
+      const filters = { page, perPage, customerNumber, referenceMonth }
+      return this.invoicesService.getInvoices(filters)
     } catch (error) {
       this.Logger.error(error)
       throw new BizException(ErrorCodeEnum.ErrorCodeUnknown)

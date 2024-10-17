@@ -1,6 +1,7 @@
 import { Injectable, Logger } from '@nestjs/common'
 import { Prisma } from '@prisma/client'
 import { PrismaService } from 'nestjs-prisma'
+import { createPaginator } from 'prisma-pagination'
 
 import { deleteFiles } from '~/common/configs/s3-upload.config'
 import {
@@ -14,9 +15,11 @@ import {
 } from '~/common/constants/positions'
 import { BizException } from '~/common/exceptions/biz.exception'
 import { AmountsInvoiceMapper } from '~/common/mappers/amounts-invoice.mapper'
+import { InvoiceDto } from '~/common/models/invoices.model'
+import { CustomersService } from '~/modules/customers/customers.service'
 import { ExtractInvoiceFromPdfService } from '~/modules/extract-from-pdf/extract-invoice.service'
 
-import { CustomersService } from '../customers/customers.service'
+import { GetInvoicesDto } from './dtos/get-invoices.dtos'
 import { UploadInvoiceDto } from './dtos/upload-invoice.dto'
 
 @Injectable()
@@ -91,6 +94,44 @@ export class InvoicesService {
     }
 
     return invoices
+  }
+
+  async getInvoices({
+    page,
+    perPage,
+    customerNumber,
+    referenceMonth,
+  }: GetInvoicesDto) {
+    const paginate = createPaginator({ perPage })
+
+    return paginate<InvoiceDto, Prisma.InvoiceFindManyArgs>(
+      this.prisma.invoice,
+      {
+        where: {
+          ...(customerNumber && {
+            customerId: BigInt(customerNumber),
+          }),
+          ...(referenceMonth && {
+            referenceMonth: {
+              contains: referenceMonth,
+              mode: 'insensitive',
+            },
+          }),
+        },
+        include: {
+          customer: {
+            select: {
+              id: true,
+              name: true,
+            },
+          },
+        },
+      },
+
+      {
+        page,
+      },
+    )
   }
 
   async getInvoice(where: Prisma.InvoiceWhereInput) {
