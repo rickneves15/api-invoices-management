@@ -24,8 +24,6 @@ export class InvoicesController {
     @UploadedFiles(FilesValidator())
     files: UploadInvoiceDto,
   ) {
-    return {
-      urls: files.invoicesFiles.map((file) => file.location),
-    }
+    return this.invoicesService.processInvoice(files)
   }
 }

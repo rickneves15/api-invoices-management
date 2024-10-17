@@ -1,4 +1,4 @@
-import { S3Client } from '@aws-sdk/client-s3'
+import { DeleteObjectCommand, S3Client } from '@aws-sdk/client-s3'
 import { UnsupportedMediaTypeException } from '@nestjs/common'
 import * as multerS3 from 'multer-s3'
 import * as path from 'path'
@@ -42,4 +42,16 @@ export const multerConfig = {
       }
     },
   }),
+}
+
+export const deleteFiles = async (fileurl: string) => {
+  const params = {
+    Bucket: env.AWS_BUCKET_NAME,
+    Key: fileurl.replace(
+      'https://invoicesmanagement.s3.us-west-2.amazonaws.com/',
+      '',
+    ),
+  }
+
+  await s3Config.send(new DeleteObjectCommand(params))
 }
