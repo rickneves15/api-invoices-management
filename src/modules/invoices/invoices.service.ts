@@ -95,7 +95,7 @@ export class InvoicesService {
       invoicesToCreate.push(invoiceToCreate)
     }
 
-    return invoices
+    return invoicesToCreate
   }
 
   async getInvoices({
