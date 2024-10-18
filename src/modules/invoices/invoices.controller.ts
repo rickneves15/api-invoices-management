@@ -43,7 +43,7 @@ export class InvoicesController {
   getInvoices(
     @Query('page') page: number = 1,
     @Query('perPage') perPage: number = 10,
-    @Query('customerNumber') customerNumber: string,
+    @Query('customerNumber') customerNumber: bigint,
     @Query('referenceMonth') referenceMonth: string,
   ) {
     try {
