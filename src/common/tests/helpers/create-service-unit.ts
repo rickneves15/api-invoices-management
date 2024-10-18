@@ -8,10 +8,18 @@ import { ZodValidationPipe } from 'nestjs-zod'
 import { clearDatabase } from '../lib/prisma'
 
 type ClassType<T> = new (...args: any[]) => T
-export const createServiceUnitTestApp = <T>(
-  Service: ClassType<T>,
-  module?: ModuleMetadata,
-) => {
+
+type CreateTestingModuleOptions<T> = {
+  Service: ClassType<T>
+  module?: ModuleMetadata
+  services?: any[]
+}
+
+export const createServiceUnitTestApp = <T>({
+  Service,
+  module,
+  services,
+}: CreateTestingModuleOptions<T>) => {
   const proxy = {} as {
     service: T
     app: TestingModule
@@ -35,6 +43,7 @@ export const createServiceUnitTestApp = <T>(
       providers: [
         PrismaService,
         Service,
+        ...(services || []),
         {
           provide: APP_PIPE,
           useClass: ZodValidationPipe,
