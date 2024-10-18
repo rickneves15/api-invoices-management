@@ -6,7 +6,7 @@ module.exports = {
     sourceType: 'module',
   },
   extends: ['@rocketseat/eslint-config/node'],
-  plugins: ['eslint-plugin-import-helpers'],
+  plugins: ['eslint-plugin-import-helpers', 'jest-extended'],
   root: true,
   env: {
     node: true,
