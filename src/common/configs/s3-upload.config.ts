@@ -1,4 +1,8 @@
-import { DeleteObjectCommand, S3Client } from '@aws-sdk/client-s3'
+import {
+  DeleteObjectCommand,
+  PutObjectCommand,
+  S3Client,
+} from '@aws-sdk/client-s3'
 import { UnsupportedMediaTypeException } from '@nestjs/common'
 import * as multerS3 from 'multer-s3'
 import * as path from 'path'
@@ -44,14 +48,47 @@ export const multerConfig = {
   }),
 }
 
+export const uploadFile = async ({
+  dataBuffer,
+  filename,
+  mimetype,
+}: {
+  dataBuffer: Buffer
+  filename: string
+  mimetype: string
+}) => {
+  const putObjectCommand = new PutObjectCommand({
+    Bucket: env.AWS_BUCKET_NAME || '',
+    Key: filename,
+    Body: dataBuffer,
+    ACL: 'public-read',
+    ContentDisposition: 'inline',
+    ContentType: mimetype,
+  })
+
+  try {
+    await s3Config.send(putObjectCommand)
+    const objectUrl = `https://${env.AWS_BUCKET_NAME}.s3.amazonaws.com/${filename}`
+    return objectUrl
+  } catch (error) {
+    console.error('Error uploading file to S3:', error)
+    throw new Error('Failed to upload file to S3')
+  }
+}
+
 export const deleteFiles = async (fileurl: string) => {
-  const params = {
+  const deleteObjectCommand = new DeleteObjectCommand({
     Bucket: env.AWS_BUCKET_NAME,
     Key: fileurl.replace(
-      'https://invoicesmanagement.s3.us-west-2.amazonaws.com/',
+      `https://${env.AWS_BUCKET_NAME}.s3.amazonaws.com/`,
       '',
     ),
-  }
+  })
 
-  await s3Config.send(new DeleteObjectCommand(params))
+  try {
+    await s3Config.send(deleteObjectCommand)
+  } catch (error) {
+    console.error('Error deleting file from S3:', error)
+    throw new Error('Failed to delete file from S3')
+  }
 }
