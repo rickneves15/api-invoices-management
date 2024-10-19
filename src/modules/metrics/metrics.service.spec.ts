@@ -1,17 +1,14 @@
-import { Test, TestingModule } from '@nestjs/testing'
-import { Prisma, PrismaClient } from '@prisma/client'
-import { DeepMockProxy } from 'jest-mock-extended'
-import { PrismaService } from 'nestjs-prisma'
+import { Prisma } from '@prisma/client'
 
+import { createServiceUnitTestApp } from '~/common/tests/helpers/create-service-unit'
+import { prisma } from '~/common/tests/lib/prisma'
+import { mockCustomerData } from '~/common/tests/mocks/data/customer'
+import { generateMockInvoice } from '~/common/tests/mocks/data/invoice'
 import { CustomersService } from '~/modules/customers/customers.service'
 import { ExtractInvoiceFromPdfService } from '~/modules/extract-from-pdf/extract-invoice.service'
 import { InvoicesService } from '~/modules/invoices/invoices.service'
 
 import { MetricsService } from './metrics.service'
-import { createServiceUnitTestApp } from '~/common/tests/helpers/create-service-unit'
-import { prisma } from '~/common/tests/lib/prisma'
-import { mockCustomerData } from '~/common/tests/mocks/data/customer'
-import { generateMockInvoice } from '~/common/tests/mocks/data/invoice'
 
 describe('MetricsService', () => {
   const proxy = createServiceUnitTestApp({

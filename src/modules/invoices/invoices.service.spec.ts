@@ -344,10 +344,11 @@ describe('InvoicesService', () => {
       const customer = await prisma.customer.create({
         data: mockCustomerData,
       })
+
       const invoice = generateMockInvoice(
         0,
         customer.customerNumber,
-      ) as {} as Prisma.InvoiceCreateInput
+      ) as Prisma.InvoiceCreateManyInput
 
       const result = await proxy.service.createInvoice(invoice)
 
