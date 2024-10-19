@@ -5,7 +5,7 @@ export const envSchema = z.object({
     .enum(['development', 'test', 'production'])
     .default('development'),
   PORT: z.coerce.number().default(3333),
-  DATABASE_URL: z.string(),
+  POSTGRES_PRISMA_URL: z.string(),
   AWS_ACCESS_KEY_ID: z.string(),
   AWS_SECRET_ACCESS_KEY: z.string(),
   AWS_REGION: z.string(),
