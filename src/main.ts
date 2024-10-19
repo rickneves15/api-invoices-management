@@ -5,6 +5,7 @@ import { env } from './env'
 
 // Config for BigInt to fixed JSON.stringify() doesn't know how to serialize a BigInt, this is error in JSON.stringify(), possible error in nestjs
 // eslint-disable-next-line no-extend-native
+// @ts-ignore
 BigInt.prototype.toJSON = function () {
   return this.toString()
 }
