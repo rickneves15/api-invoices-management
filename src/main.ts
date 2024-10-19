@@ -15,6 +15,13 @@ BigInt.prototype.toJSON = function () {
 async function bootstrap() {
   const app = await NestFactory.create(AppModule)
 
+  app.enableCors({
+    origin: '*',
+    methods: 'GET,HEAD,PUT,PATCH,POST,DELETE,OPTIONS',
+    credentials: true,
+    allowedHeaders: '*',
+  })
+
   const PORT = env.PORT || 3333
   await app.listen(PORT)
 }
